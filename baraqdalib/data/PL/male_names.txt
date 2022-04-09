@@ -1,0 +1,6 @@
+Filip 200
+Jakub 600
+Kacper 3200
+Marek 4600
+Pawel 2345
+Szymon 123
