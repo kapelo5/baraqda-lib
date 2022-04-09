@@ -1,5 +1,7 @@
-from bond import generator
+from baraqdalib import Generator
 
 
 if __name__ == '__main__':
-    print(generator.generate(100, 'PL'))
+    abba = Generator()
+    print(abba.generate('PL', 100))
+
