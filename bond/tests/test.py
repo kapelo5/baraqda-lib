@@ -1,20 +1,19 @@
 import unittest
 from collections import Counter
-from bond.generator import generate
-from bond.data import PL
 from numpy import cumsum
-
+from baraqdalib import Generator
 
 class MyTestCase(unittest.TestCase):
     def test_first_name(self):
-        name = generate(1, 'PL')[0]
+        self.p = Generator()
+        self.name = self.p.generate('PL', 1)
         assert name
         self.assertIsInstance(name, str)
-        assert name in PL.StoreData.first_name_male
+        assert name in p._data
 
     def test_weighed_random(self):
-        names = generate(1000, 'PL')
-        # print(names)
+        p = Generator()
+        names = p.generate('PL', 1000)
         names_counts = Counter(names)
         names_count_az = {}
         for i in sorted(names_counts):
@@ -26,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         names_counts_az_weighs = cumsum(names_counts_az_weighs)
 
         for i in range(len(names_counts_az_weighs)):
-            self.assertAlmostEqual(names_counts_az_weighs[i], PL.StoreData.first_name_male_weighs[i], delta=0.05)
+            self.assertAlmostEqual(names_counts_az_weighs[i], p.weights[i], delta=0.05)
 
 
 if __name__ == '__main__':
