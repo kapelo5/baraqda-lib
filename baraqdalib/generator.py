@@ -1,6 +1,6 @@
 import random
 import os
-from typing import List, Any
+from typing import List
 
 
 class Generator:
