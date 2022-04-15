@@ -1,1 +1,3 @@
-from baraqdalib import Generator
+from baraqdalib.generator import Generator
+
+
