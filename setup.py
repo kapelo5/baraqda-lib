@@ -33,5 +33,5 @@ setup(
         'Operating System :: OS Independent'
     ],
     include_package_data=True,
-    install_requires=['numpy', 'os', 'random', 'typing']
+    install_requires=['numpy', 'typing']
 )
