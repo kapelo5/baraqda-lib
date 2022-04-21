@@ -1,3 +1,4 @@
+values weights
 Filip 200
 Jakub 600
 Kacper 3200
