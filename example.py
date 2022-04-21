@@ -1,7 +1,12 @@
 from baraqdalib import Generator
 
-
 if __name__ == '__main__':
     abba = Generator()
-    print(abba.generate('PL', 100))  # generate data
-    print(abba.stored_draw())  # return generated data from cache
+    print(abba.generate('PL', 'male_names', 100))  # generate data
+    print(abba.generate('PL', 'female_names', 100))  # generate data
+    print(abba.generate('DE', 'female_names', 100))  # generate data
+    print(abba.draw('PL','female_names'))
+    print(abba.access_data('PL', 'male_names'))
+    print(abba.access_data('PL', 'female_names'))
+    print(abba.access_data('DE', 'male_names'))
+
