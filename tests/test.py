@@ -5,34 +5,6 @@ from baraqdalib import Generator
 
 class MyTestCase(unittest.TestCase):
 
-    # def test_first_name(self):
-    #     p = Generator()
-    #     p.weights = [[10, 20, 100, 50, 5]]
-    #     p._data = [['Szymon', 'Marcin', 'Jan', 'Jakub', 'Wiktor']]
-    #     name = p.generate('PL', 1)[0][0]
-    #     assert name
-    #     self.assertIsInstance(name, str)
-    #     self.assertIn(name, p._data[0])
-    #
-    # def test_weighed_random(self):
-    #     p = Generator()
-    #     p.weights = [[10, 20, 100, 50, 5]]
-    #     p._data = [['Jakub', 'Jan', 'Marcin', 'Szymon', 'Wiktor']]
-    #     weights_in_percent = []
-    #     names = p.generate('PL', 10000)[0]
-    #     names_counts = Counter(names)
-    #     names_count_az = {}
-    #     for i in sorted(names_counts):
-    #         names_count_az[i] = names_counts[i]
-    #     names_counts_az_weighs = list(names_count_az.values())
-    #     for i in range(len(names_counts_az_weighs)):
-    #         names_counts_az_weighs[i] = round(int(names_counts_az_weighs[i])/10000, 3)
-    #         weights_in_percent.append(round(p.weights[0][i]/sum(p.weights[0]), 3))
-    #
-    #     for i in range(len(names_counts_az_weighs)):
-    #         self.assertAlmostEqual(names_counts_az_weighs[i], weights_in_percent[i], delta=0.02)
-
-
     def test_first_name(self):  # check if generated name are from given data
         p = Generator()
         p._data = {'PL': {
