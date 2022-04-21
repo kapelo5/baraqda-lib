@@ -7,20 +7,20 @@ class Generator:
     def __init__(self) -> None:
         self._data: Dict[str, Dict[str, Dict[str, list]]] = dict(dict(dict()))  # create empty dict
 
-    def draw(self, lang: str, data_type: str, count: int = 1) -> List[str]:  # return table with weighted draw
+    def draw(self, lang: str, data_type: str, count: int = 1, sep: str = ' ') -> List[str]:  # return table with weighted draw
         try:
             return random.choices(self._data[lang][data_type]['values'],
                                   weights=self._data[lang][data_type]['weights'],
                                   k=count)
         except KeyError:  # run normal generation when error occurred
-            self.generate(lang, data_type, count)
+            self.generate(lang, data_type, count, sep)
 
     def search_files(self, path, sep, lang) -> None:
+        self._data[lang] = {}
         for root, dirs, files in os.walk(path):  # walk and list files
             for file in files:
                 # make keys in _data for files
                 filename = file.split('.')[0]
-                self._data[lang] = {}
                 self._data[lang][filename] = {}  # create dict with key filename
                 self.read_files(os.path.join(root, file), sep, lang, filename)
 
@@ -70,7 +70,7 @@ class Generator:
                 print(f'Data not provided for {lang}, {data_type}!')
                 return []
 
-        return self.draw(lang, data_type, counter)  # generate weighted dataw
+        return self.draw(lang, data_type, counter, sep)  # generate weighted dataw
 
     def access_data(self, lang: str, data_type: str) -> Dict[str, list]:
         try:  # check if keys lang, data_type exists
