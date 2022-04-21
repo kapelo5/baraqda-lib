@@ -5,18 +5,22 @@ from typing import List, Dict
 
 class Generator:
     def __init__(self) -> None:
-        self._data: Dict[str, Dict[str, Dict[str, list]]] = dict(dict(dict()))
+        self._data: Dict[str, Dict[str, Dict[str, list]]] = dict(dict(dict()))  # create empty dict
 
-    def draw(self, lang: str, data_type: str, count: int = 1) -> List[str]:  # create table with weighted draw
-        return random.choices(self._data[lang][data_type]['values'],
-                              weights=self._data[lang][data_type]['weights'],
-                              k=count)
+    def draw(self, lang: str, data_type: str, count: int = 1) -> List[str]:  # return table with weighted draw
+        try:
+            return random.choices(self._data[lang][data_type]['values'],
+                                  weights=self._data[lang][data_type]['weights'],
+                                  k=count)
+        except KeyError:  # run normal generation when error occurred
+            self.generate(lang, data_type, count)
 
     def search_files(self, path, sep, lang) -> None:
         for root, dirs, files in os.walk(path):  # walk and list files
             for file in files:
                 # make keys in _data for files
                 filename = file.split('.')[0]
+                self._data[lang] = {}
                 self._data[lang][filename] = {}  # create dict with key filename
                 self.read_files(os.path.join(root, file), sep, lang, filename)
 
@@ -26,17 +30,20 @@ class Generator:
         lines = file.readlines()  # read all lines
         file.close()  # close file
         # make temp list to store data from file
-        values: List[str] = []
-        weights: List[int] = []
-        for line in lines[1::]:  # read line by line and prepare to saving in class variables start from 1
+        temp_list = []
+        keys = lines[0].strip('\n\r').split(separator)  # read keys
+        weights_index = keys.index('weights')  # return index where weights are stored
+        for i in range(len(keys)):  # create lists to store values
+            temp_list.append([])
+        for line in lines[1::]:  # read line by line and prepare to saving in class variables, start from 1
             line = line.strip('\n\r')
             temp_tab = line.split(separator)
-            values.append(temp_tab[0])
-            weights.append(int(temp_tab[1]))
+            temp_tab[weights_index] = int(temp_tab[weights_index])
+            for t, item in zip(temp_tab, temp_list):
+                item.append(t)
 
-        keys = lines[0].strip('\n\r').split(separator)  # read keys
-        self._data[lang][filename][keys[0]] = values
-        self._data[lang][filename][keys[1]] = weights
+        for k, v in zip(keys, temp_list):
+            self._data[lang][filename][k] = v
 
     def generate(self, lang: str, data_type: str, counter: int = 1, sep: str = ' ') -> List[str]:
         # check if key lang exist
@@ -44,13 +51,31 @@ class Generator:
             self._data[lang]
         except KeyError:
             path = os.path.join('baraqdalib', 'data', lang)  # create path to subdirectories
-            self._data[lang] = {}
             self.search_files(path, sep, lang)  # search files in directory
-        else:  # check if key data_type exist
-            try:
+            try:  # check if key lang exist after search for directory
+                self._data[lang]
+            except KeyError:
+                print(f'Data not provided for {lang}!')
+                return []
+
+        # check if key data_type exist
+        try:
+            self._data[lang][data_type]
+        except KeyError:
+            path = os.path.join('baraqdalib', 'data', lang)  # create path to subdirectories
+            self.search_files(path, sep, lang)  # search files in directory
+            try:  # check if key data_type exist after search and reading files
                 self._data[lang][data_type]
             except KeyError:
-                path = os.path.join('baraqdalib', 'data', lang)  # create path to subdirectories
-                self.search_files(path, sep, lang)  # search files in directory
+                print(f'Data not provided for {lang}, {data_type}!')
+                return []
 
-        return self.draw(lang, 'male_names', counter)  # generate weighted dataw
+        return self.draw(lang, data_type, counter)  # generate weighted dataw
+
+    def access_data(self, lang: str, data_type: str) -> Dict[str, list]:
+        try:  # check if keys lang, data_type exists
+            self._data[lang][data_type]
+        except KeyError:
+            print(f'No data for {lang}, {data_type}')
+        else:
+            return self._data[lang][data_type]
