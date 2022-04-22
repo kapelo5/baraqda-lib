@@ -37,18 +37,9 @@ class Addresses:
             streets_csv = csv.reader(streetsFile)
             for row in streets_csv:
                 if row[4] == city_sym:
-                    streets.append((row[6] + ' ' + row[7] + ' ' + row[8]).replace('  ', ' '))
+                    streets.append((row[6] + ' ' + row[8] + ' ' + row[7]).replace('  ', ' '))
                 else:
-                    streets_dump.append((row[6] + ' ' + row[7] + ' ' + row[8]).replace('  ', ' '))
+                    streets_dump.append((row[6] + ' ' + row[8] + ' ' + row[7]).replace('  ', ' '))
             if not streets:
                 return random.choice(streets_dump)
             return random.choice(streets)
-
-
-addr = Addresses()
-cities = addr.generate(1000)
-print(cities[0])
-sym = addr.getSymCity(cities[0])
-print(sym)
-streets1 = addr.getStreets(sym)
-print(streets1)
