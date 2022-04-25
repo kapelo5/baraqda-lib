@@ -40,9 +40,6 @@ class Addresses:
             self.address.update({str(city_id): {'Street': street, 'City': city}})
         return self.address
 
-    def get_path(self, file_name):   # Returning path /baraqdalib/addressData/
-        return os.path.join('baraqdalib', 'addressData', file_name)
-
     def get_sym_city(self, city: str):    # Searching for city in cities and returning sym
         for sym in self._cities:
             if sym[1] == city:
