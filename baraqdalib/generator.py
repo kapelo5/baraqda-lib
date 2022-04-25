@@ -31,7 +31,8 @@ class Generator:
         file.close()  # close file
         # make temp list to store data from file
         temp_list = []
-        keys = lines[0].strip('\n\r').split(separator)  # read keys
+        keys = lines[0].strip('\n\r'+separator).split(separator)  # read keys
+        # print(keys)
         weights_index = keys.index('weights')  # return index where weights are stored
         for i in range(len(keys)):  # create lists to store values
             temp_list.append([])
@@ -69,7 +70,7 @@ class Generator:
             except KeyError:
                 print(f'Data not provided for {lang}, {data_type}!')
                 return []
-
+        # print(self._data)
         return self.draw(lang, data_type, counter, sep)  # generate weighted dataw
 
     def access_data(self, lang: str, data_type: str) -> Dict[str, list]:
