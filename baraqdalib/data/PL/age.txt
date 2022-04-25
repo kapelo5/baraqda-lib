@@ -1,5 +1,4 @@
 values	weights
-less then a year	11103
 1 year old	11103
 2 years old	11103
 3 years old	15432

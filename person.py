@@ -44,10 +44,16 @@ class Person:
             gender = randrange(0, 9, 2)
         if date_of_birth[-4] == '1':
             pesel = date_of_birth[-2:] + date_of_birth[3:5] + date_of_birth[0:2] + str(randrange(100, 999)) + str(
-                gender) + str(randrange(0, 9))
+                gender)
+            control_sum = int(pesel[0])*1 + int(pesel[1])*3 + int(pesel[2])*7 + int(pesel[3])*9 + int(pesel[4])*1 + int(pesel[5])*3 + int(pesel[6])*7 +\
+                          int(pesel[7])*9 + int(pesel[8])*1 + int(pesel[9])*3
+            pesel = pesel + str(control_sum)
         else:
             pesel = date_of_birth[-2:] + str(int(date_of_birth[3:5])+20) + date_of_birth[0:2] + str(randrange(100, 999)) + str(
-                gender) + str(randrange(0, 10))
+                gender)
+            control_sum = int(pesel[0])*1 + int(pesel[1])*3 + int(pesel[2])*7 + int(pesel[3])*9 + int(pesel[4])*1 + int(pesel[5])*3 + int(pesel[6])*7 +\
+                          int(pesel[7])*9 + int(pesel[8])*1 + int(pesel[9])*3
+            pesel = pesel + str(control_sum)
         return pesel
 
     def set(self):      #generating parameters of a person based on our generator
@@ -57,9 +63,10 @@ class Person:
         self.hair = str(self.person_generator.generate('PL', 'hair', 1, sep='\t'))
         if self.age == 'less then a year':
             self.nr_of_years = 0                #temporary value needed to determine date of birth
+            self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
         else:                                   #0 if he/she was born this year
             self.nr_of_years = int(self.age[2:4])
-        self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
+            self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
         if self.toss() == 0:
             self.gender = 'Female'              #female attributes
             self.first_name = str(self.person_generator.generate('PL', 'female_first_name', 1, sep='\t'))
