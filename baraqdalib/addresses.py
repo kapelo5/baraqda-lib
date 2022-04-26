@@ -2,6 +2,7 @@ from baraqdalib import Generator
 import os
 import csv
 import random
+from typing import List, Dict
 
 
 class Addresses:
@@ -11,11 +12,12 @@ class Addresses:
         self.cities_file_name: str = 'cities.csv'
         self.cities_pops_data: str = 'cities_pops'
         self.cities_pops_file_name: str = 'cities_pops.txt'
-        self.lang = 'PL'
-        self.address = {}
+        self.lang: str = 'PL'
+        self.address: Dict[str, Dict[str, str]] = dict()
         self.sep: str = '\t'
-        self._streets = []
-        self._cities = []
+        self._streets: List[List[str, str]] = list()
+        self._cities: List[List[str, str]] = list()
+        self._address_id: int = 0
         self._set_streets()
         self._set_cities()
 
@@ -34,10 +36,11 @@ class Addresses:
 
     def generate(self, counter: int = 1):   # Generating from Generator class
         generated_cities = self.address_generator.generate(self.lang, self.cities_pops_data, counter, self.sep)
-        for city, city_id in zip(generated_cities, range(len(generated_cities))):
+        for city in generated_cities:
             sym = self.get_sym_city(city)
-            street = self.get_streets(sym)
-            self.address.update({str(city_id): {'Street': street, 'City': city}})
+            street = self.get_streets(int(sym))
+            self.address.update({str(self._address_id): {'street': street, 'city': city}})
+            self._address_id += 1   # Iterating over _address_id
         return self.address
 
     def get_sym_city(self, city: str):    # Searching for city in cities and returning sym
