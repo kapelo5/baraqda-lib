@@ -11,7 +11,8 @@ class Person:
     def toss(self):
         return randrange(0, 2)  # checking if it is a male (1) or a female (0)
 
-    def set_date_of_birth(self, nr_of_years):           #function to generate precise date of birth
+    def set_date_of_birth(self, nr_of_years):
+
         current_year = str(datetime.now())
         current_year = int(current_year[0:4])
         year_of_birth = current_year - nr_of_years
@@ -45,41 +46,76 @@ class Person:
         if date_of_birth[-4] == '1':
             pesel = date_of_birth[-2:] + date_of_birth[3:5] + date_of_birth[0:2] + str(randrange(100, 999)) + str(
                 gender)
-            control_sum = int(pesel[0])*1 + int(pesel[1])*3 + int(pesel[2])*7 + int(pesel[3])*9 + int(pesel[4])*1 + int(pesel[5])*3 + int(pesel[6])*7 +\
-                          int(pesel[7])*9 + int(pesel[8])*1 + int(pesel[9])*3
-            pesel = pesel + str(control_sum)
+            control_sum = str(int(pesel[0])*1)[-1] + str(int(pesel[1])*3)[-1] + str(int(pesel[2])*7)[-1] + str(int(pesel[3])*9)[-1] + str(int(pesel[4])*1)[-1] + str(int(pesel[5])*3)[-1] + \
+                          str(int(pesel[6])*7)[-1] + str(int(pesel[7])*9)[-1] + str(int(pesel[8])*1)[-1] + str(int(pesel[9])*3)[-1]
+            pesel = pesel + control_sum[-1]
         else:
             pesel = date_of_birth[-2:] + str(int(date_of_birth[3:5])+20) + date_of_birth[0:2] + str(randrange(100, 999)) + str(
                 gender)
-            control_sum = int(pesel[0])*1 + int(pesel[1])*3 + int(pesel[2])*7 + int(pesel[3])*9 + int(pesel[4])*1 + int(pesel[5])*3 + int(pesel[6])*7 +\
-                          int(pesel[7])*9 + int(pesel[8])*1 + int(pesel[9])*3
-            pesel = pesel + str(control_sum)
+            control_sum = str(int(pesel[0])*1)[-1] + str(int(pesel[1])*3)[-1] + str(int(pesel[2])*7)[-1] + str(int(pesel[3])*9)[-1] + str(int(pesel[4])*1)[-1] + str(int(pesel[5])*3)[-1] + \
+                          str(int(pesel[6])*7)[-1] + str(int(pesel[7])*9)[-1] + str(int(pesel[8])*1)[-1] + str(int(pesel[9])*3)[-1]
+            pesel = pesel + control_sum[-1]
         return pesel
 
     def set(self):      #generating parameters of a person based on our generator
 
-        self.eyes = str(self.person_generator.generate('PL', 'eyes', 1, sep='\t'))  #unisex attributes
-        self.age = str(self.person_generator.generate('PL', 'age', 1, sep='\t'))
-        self.hair = str(self.person_generator.generate('PL', 'hair', 1, sep='\t'))
+        self.eyes = str(self.person_generator.generate('PL', 'eyes', 1, sep='\t'))[2:-2] #unisex attributes
+        self.age = str(self.person_generator.generate('PL', 'age', 1, sep='\t'))[2:4]
+        self.hair = str(self.person_generator.generate('PL', 'hair', 1, sep='\t'))[2:-2]
+        self.blood_type= str(self.person_generator.generate('PL', 'blood_type', 1, sep='\t'))[2:-2]
+        self.mothers_maiden_name = str(self.person_generator.generate('PL', 'female_surname', 1, sep='\t'))[2:-2]
         if self.age == 'less then a year':
             self.nr_of_years = 0                #temporary value needed to determine date of birth
             self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
         else:                                   #0 if he/she was born this year
-            self.nr_of_years = int(self.age[2:4])
+            self.nr_of_years = int(self.age[0:2])
             self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
         if self.toss() == 0:
             self.gender = 'Female'              #female attributes
-            self.first_name = str(self.person_generator.generate('PL', 'female_first_name', 1, sep='\t'))
-            self.second_name = str(self.person_generator.generate('PL', 'female_second_name', 1, sep='\t'))
-            self.surname = str(self.person_generator.generate('PL', 'female_surname', 1, sep='\t'))
+            self.first_name = str(self.person_generator.generate('PL', 'female_first_name', 1, sep='\t'))[2:-2]
+            self.second_name = str(self.person_generator.generate('PL', 'female_second_name', 1, sep='\t'))[2:-2]
+            while self.second_name == self.first_name:
+                self.second_name = str(self.person_generator.generate('PL', 'female_second_name', 1, sep='\t'))[2:-2]
+            self.surname = str(self.person_generator.generate('PL', 'female_surname', 1, sep='\t'))[2:-2]
             self.id_number = self.set_pesel(self.date_of_birth, 'Female')
         else:
             self.gender = 'Male'                #female attributes
-            self.first_name = str(self.person_generator.generate('PL', 'male_first_name', 1, sep='\t'))
-            self.second_name = str(self.person_generator.generate('PL', 'male_second_name', 1, sep='\t'))
-            self.surname = str(self.person_generator.generate('PL', 'male_surname', 1, sep='\t'))
+            self.first_name = str(self.person_generator.generate('PL', 'male_first_name', 1, sep='\t'))[2:-2]
+            self.second_name = str(self.person_generator.generate('PL', 'male_second_name', 1, sep='\t'))[2:-2]
+            while self.second_name == self.first_name:
+                self.second_name = str(self.person_generator.generate('PL', 'male_second_name', 1, sep='\t'))[2:-2]
+            self.surname = str(self.person_generator.generate('PL', 'male_surname', 1, sep='\t'))[2:-2]
             self.id_number = self.set_pesel(self.date_of_birth, 'Male')
 
     def get(self):
-        return self.first_name[2:-2], self.second_name[2:-2], self.surname[2:-2], self.gender, \
-               self.eyes[2:-2],  self.hair[2:-2], self.age[2:-2], self.date_of_birth, self.id_number
+        if self.second_name == ' ':
+            self.attributes = {
+                "name": self.first_name,
+                "surname": self.surname,
+                "gender": self.gender,
+                "mother's maiden name": self.mothers_maiden_name,
+                "eyes": self.eyes,
+                "hair": self.hair,
+                "age (in years)": self.age,
+                "date of birth": self.date_of_birth,
+                "blood type": self.blood_type,
+                "ID": self.id_number
+
+            }
+        else:
+            self.attributes = {
+                "name": self.first_name,
+                "second name": self.second_name,
+                "surname": self.surname,
+                "gender": self.gender,
+                "mother's maiden name": self.mothers_maiden_name,
+                "eyes": self.eyes,
+                "hair": self.hair,
+                "age (in years)": self.age,
+                "date of birth": self.date_of_birth,
+                "blood type": self.blood_type,
+                "ID": self.id_number
+
+            }
+        return self.attributes
+
