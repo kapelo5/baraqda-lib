@@ -12,14 +12,12 @@ class Addresses:
         self.cities_file_name: str = 'cities.csv'
         self.cities_pops_data: str = 'cities_pops'
         self.cities_pops_file_name: str = 'cities_pops.txt'
-        self.lang: str = 'PL'
-        self.address: Dict[str, Dict[str, str]] = dict()
         self.sep: str = '\t'
-        self._streets: List[List[str, str]] = list()
-        self._cities: List[List[str, str]] = list()
-        self._address_id: int = 0
+        self._streets: List[List[str, str]] = list(list())
+        self._cities: List[List[str, str]] = list(list())
         self._set_streets()
         self._set_cities()
+        # Here will be postal codes
 
     def _set_cities(self):   # Setting self.cities variable with list from set.cities_file_name
         with open(os.path.join('baraqdalib', 'addressData', self.cities_file_name), 'r', encoding='utf-8-sig') as citiesFile:
@@ -34,14 +32,14 @@ class Addresses:
             for row in streets_csv:
                 self._streets.append([row[4], (row[6] + ' ' + row[8] + ' ' + row[7]).replace('  ', ' ')])
 
-    def generate(self, counter: int = 1):   # Generating from Generator class
-        generated_cities = self.address_generator.generate(self.lang, self.cities_pops_data, counter, self.sep)
-        for city in generated_cities:
+    def generate(self, counter: int = 1, lang: str = 'PL'):   # Generating from Generator class
+        generated_cities = self.address_generator.generate(lang, self.cities_pops_data, counter, self.sep)
+        address: Dict[Dict[str, str]] = dict(dict())
+        for city, address_id in zip(generated_cities, range(len(generated_cities))):
             sym = self.get_sym_city(city)
             street = self.get_streets(int(sym))
-            self.address.update({str(self._address_id): {'street': street, 'city': city}})
-            self._address_id += 1   # Iterating over _address_id
-        return self.address
+            address.update({str(address_id): {'street': street, 'city': city}})
+        return address
 
     def get_sym_city(self, city: str):    # Searching for city in cities and returning sym
         for sym in self._cities:
