@@ -4,15 +4,30 @@ from datetime import datetime
 
 
 class Person:
-
+    """Generating attributes for Polish person. For simple use set() and get() to generate one record,
+     for more make for loop with these two functions.
+    """
     def __init__(self):
         self.person_generator = Generator()
 
     def toss(self):
+        """
+        Parameters: None
+
+        Returns:
+        int: return random value of 0 or 1 which determines gender
+        """
         return randrange(0, 2)  # checking if it is a male (1) or a female (0)
 
     def set_date_of_birth(self, nr_of_years):
+        """Create date of brith using generated number of years in previous step
 
+        Parameters:
+        nr_of_years (int): number of years of generated person
+
+        Returns:
+        str: returns calculated date of birth
+        """
         current_year = str(datetime.now())
         current_year = int(current_year[0:4])
         year_of_birth = current_year - nr_of_years
@@ -38,7 +53,15 @@ class Person:
         return date_of_birth
 
     def set_pesel(self, date_of_birth, female_or_male):                 #func creates polish ID number
+        """ Create polish identifacation number, PESEL
 
+        Parameters:
+        date_of_birth (str):
+        female_or_male (int): determines gender
+
+        Returns:
+        str: returning calculated PESEL
+        """
         if female_or_male == 'Male':
             gender = randrange(1, 10, 2)
         else:
@@ -58,7 +81,12 @@ class Person:
         return pesel
 
     def set(self):      #generating parameters of a person based on our generator
+        """Generating parameters for a person based on
 
+        Parameters: None
+
+        Returns: None
+        """
         self.eyes = str(self.person_generator.generate('PL', 'eyes', 1, sep='\t'))[2:-2] #unisex attributes
         self.age = str(self.person_generator.generate('PL', 'age', 1, sep='\t'))[2:4]
         self.hair = str(self.person_generator.generate('PL', 'hair', 1, sep='\t'))[2:-2]
@@ -88,6 +116,12 @@ class Person:
             self.id_number = self.set_pesel(self.date_of_birth, 'Male')
 
     def get(self):
+        """Print generated attribiutes
+
+        Parameters: None
+
+        Returns: None
+        """
         if self.second_name == ' ':
             self.attributes = {
                 "name": self.first_name,

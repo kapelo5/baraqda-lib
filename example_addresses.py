@@ -1,4 +1,4 @@
-from baraqdalib.addresses import Addresses
+from baraqdalib import Addresses
 
 addr = Addresses()
 for i in range(100):

@@ -1,13 +1,31 @@
+import csv
 import random
 import os
 from typing import List, Dict
+import pkgutil
 
 
 class Generator:
+    """Generating data with real distribution given in loaded files. To call functions simply use Generator.generate()."""
     def __init__(self) -> None:
         self._data: Dict[str, Dict[str, Dict[str, list]]] = dict(dict(dict()))  # create empty dict
+        self._list_of_files: Dict[str, list] = dict()
+
+        self._list_of_files = {'PL': ['age.csv', 'blood_type.csv', 'cities_pops.txt', 'eyes.csv', 'female_first_name.csv', 'female_second_name.csv', 'female_surname.csv',
+                      'hair.csv', 'male_first_name.csv', 'male_second_name.csv', 'male_surname.csv']}
 
     def draw(self, lang: str, data_type: str, count: int = 1, sep: str = ' ') -> List[str]:  # return table with weighted draw
+        """Drawing a results from given file, returing list with len(list) = counter
+
+        Parameters:
+        lang (str): two letters shortcut for country
+        data_type (str): name of file from which data should be generated
+        count (int): default is 1. How many records should be generated
+        sep (str): default is single space. Set separators for columns in files
+
+        Returns:
+        list: Returning list of generated data.
+        """
         try:
             return random.choices(self._data[lang][data_type]['values'],
                                   weights=self._data[lang][data_type]['weights'],
@@ -16,37 +34,63 @@ class Generator:
             self.generate(lang, data_type, count, sep)
 
     def search_files(self, path, sep, lang) -> None:
-        self._data[lang] = {}
-        for root, dirs, files in os.walk(path):  # walk and list files
-            for file in files:
-                # make keys in _data for files
-                filename = file.split('.')[0]
-                self._data[lang][filename] = {}  # create dict with key filename
-                self.read_files(os.path.join(root, file), sep, lang, filename)
+        """Searching for files in given list of filenames
 
-    def read_files(self, filepath, separator, lang, filename) -> None:
+        Parameters:
+        sep (str): separator of columns in files
+        lang (str): Two letters shortcut for country
+
+        Returns: None
+        """
+        self._data[lang] = {}
+        for file in self._list_of_files[lang]:
+            filename = file.split('.')[0]
+            self._data[lang][filename] = {}  # create dict with key filename
+            self.read_files(os.path.join('data/PL', file), sep, lang, filename)
+
+    def read_files(self, filepath: str, separator: str, lang: str, filename: str) -> None:
+        """Reading files into class variable self._data
+
+        Parameters:
+        filepath (str): Filepath for a file
+        separator (str): Separator of columns in files
+        lang (str): Two letters shortcut for country
+        filename (str): Filename
+
+        Returns: None
+        """
         # read files and store data from them
-        file = open(filepath, 'r', encoding='utf-8')  # open file
-        lines = file.readlines()  # read all lines
-        file.close()  # close file
-        # make temp list to store data from file
+        files = pkgutil.get_data(__package__, filepath)
+        file = csv.reader(files.decode('utf-8').splitlines(), delimiter='\t')
         temp_list = []
-        keys = lines[0].strip('\n\r'+separator).split(separator)  # read keys
-        # print(keys)
-        weights_index = keys.index('weights')  # return index where weights are stored
+        keys = []
+        keys = next(file)
+        weights_index = keys.index('weights')
         for i in range(len(keys)):  # create lists to store values
             temp_list.append([])
-        for line in lines[1::]:  # read line by line and prepare to saving in class variables, start from 1
-            line = line.strip('\n\r')
-            temp_tab = line.split(separator)
-            temp_tab[weights_index] = int(temp_tab[weights_index])
-            for t, item in zip(temp_tab, temp_list):
-                item.append(t)
-
+        for row in file:
+            if row[weights_index] == 'weights':
+                pass
+            else:
+                temp_tab = row
+                temp_tab[weights_index] = int(temp_tab[weights_index])
+                for t, item in zip(temp_tab, temp_list):
+                    item.append(t)
         for k, v in zip(keys, temp_list):
             self._data[lang][filename][k] = v
 
     def generate(self, lang: str, data_type: str, counter: int = 1, sep: str = ' ') -> List[str]:
+        """Generating data with reading files. This is recommended way of using.
+
+        Parameters:
+        lang (str): two letters shortcut for country
+        data_type (str): name of file from which data should be generated
+        counter (int): default is 1. How many records should be generated
+        sep (str): default is single space. Set separators for columns in files
+
+        Returns:
+        list: Returning list of generated data.
+        """
         # check if key lang exist
         try:
             self._data[lang]
@@ -70,10 +114,19 @@ class Generator:
             except KeyError:
                 print(f'Data not provided for {lang}, {data_type}!')
                 return []
-        # print(self._data)
         return self.draw(lang, data_type, counter, sep)  # generate weighted dataw
 
     def access_data(self, lang: str, data_type: str) -> Dict[str, list]:
+        """Access data which are readed from files. Helpful when you
+        want to make sure that your files are in correct format
+
+        Parameters:
+        lang (str): Two letters shortcut for country
+        data_type (str): Name of file from which data should be generated
+
+        Returns:
+        Dict: Returning dictionary with loaded data in class instance
+        """
         try:  # check if keys lang, data_type exists
             self._data[lang][data_type]
         except KeyError:

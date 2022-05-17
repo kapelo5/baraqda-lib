@@ -1,4 +1,4 @@
-from person import Person
+from baraqdalib import Person
 
 if __name__ == '__main__':
     test = Person()
