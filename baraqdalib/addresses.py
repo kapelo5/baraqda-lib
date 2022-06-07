@@ -1,86 +1,105 @@
 from baraqdalib import Generator
 import csv
 import random
-from typing import List, Dict
+from typing import Dict
 import pkgutil
+
 
 class Addresses:
     """Class Addresses for generating polish fake address but with true distribution"""
     def __init__(self):
-        self.address_generator = Generator()
+        self._postal_codes: Dict[str] = dict()
+        self._streets: Dict[str] = dict()
+        self._cities: Dict[Dict[str]] = dict(dict())
 
-        self.streets_file_name: str = 'streets.csv'
-        self.cities_file_name: str = 'cities.csv'
-        self.cities_pops_data: str = 'cities_pops'
-        self.cities_pops_file_name: str = 'cities_pops.csv'
-
-        self._postal_code: List[List[str, str]] = list(list())
-        self._streets: List[List[str, str]] = list(list())
-        self._cities: List[List[str, str]] = list(list())
-
-        self.sep: str = '\t'
-
-        self._set_streets()
         self._set_cities()
-        self._set_codes()
+        self._set_streets()
+        self._set_postal_codes()
 
-    def _set_codes(self):   # Setting self._postal_code variable with list from 'postal_codes.csv'
-        """Get postal codes from file postal_codes.csv and save in self._postal_code list
-
-        Parameters : None
-
-        Returns: None
-        """
-        codesFile = pkgutil.get_data(__package__, 'addressData/postal_codes.csv')
-        codes = csv.reader(codesFile.decode('utf-8-sig').splitlines(), delimiter=';')
-        for code in codes:
-            self._postal_code.append([code[2], code[0]])
-
-    def _set_cities(self):   # Setting self.cities variable with list from self.cities_file_name
-        """Get cities names  from file cities.csv and save in self._cities list
+    def _set_cities(self):
+        """Get cities names  from file cities.csv and save in self._cities dict
 
         Parameters : None
 
         Returns: None
         """
-        citiesFile = pkgutil.get_data(__package__, 'addressData/cities.csv')
-        cities = csv.reader(citiesFile.decode('utf-8-sig').splitlines(), delimiter=';')
-        for sym in cities:
-            self._cities.append(sym)
+        cities_file = pkgutil.get_data(__package__, 'data/PL/cities.csv')
+        cities_file = csv.DictReader(cities_file.decode('utf-8-sig').splitlines(), delimiter=';')
 
-    def _set_streets(self):  # Setting self.streets variable with list from self.cities_file_name
-        """Get street names from file streets.csv and save in self._streets list
+        for row in cities_file:
+            city = {row['SYM']: row['NAZWA']}
+            self._cities.update(city)
+
+    def _set_streets(self):
+        """Get street names from file streets.csv and save in self._streets dict
 
         Parameters : None
 
         Returns: None
         """
-        streetsFile = pkgutil.get_data(__package__, 'addressData/streets.csv')
-        streets_csv = csv.reader(streetsFile.decode('utf-8-sig').splitlines())
-        for row in streets_csv:
-            self._streets.append([row[4], (row[6] + ' ' + row[8] + ' ' + row[7]).replace('  ', ' ')])
+        streets_file = pkgutil.get_data(__package__, 'data/PL/streets.csv')
+        streets_file = csv.DictReader(streets_file.decode('utf-8-sig').splitlines(), delimiter=';')
 
-    def generate(self, counter: int = 1, lang: str = 'PL'):   # Generating from Generator class
+        for street in streets_file:
+            streets = {street['SYM']: list()}
+            self._streets.update(streets)
+
+        streets_file = pkgutil.get_data(__package__, 'data/PL/streets.csv')
+        streets_file = csv.DictReader(streets_file.decode('utf-8-sig').splitlines(), delimiter=';')
+
+        for street in streets_file:
+            self._streets[street['SYM']].append(str(street['CECHA']+' '+street['NAZWA_2']+' '+street['NAZWA_1']).replace('  ', ' '))
+
+    def _set_postal_codes(self):
+        """Get postal codes from file postal_codes.csv and save in self._postal_code dict
+
+        Parameters : None
+
+        Returns: None
+        """
+        postal_codes_file = pkgutil.get_data(__package__, 'data/PL/postal_codes.csv')
+        postal_codes_file = csv.DictReader(postal_codes_file.decode('utf-8-sig').splitlines(), delimiter=';')
+
+        for postal_code in postal_codes_file:
+            city = {postal_code['MIEJSCOWOŚĆ']: list()}
+            self._postal_codes.update(city)
+
+        postal_codes_file = pkgutil.get_data(__package__, 'data/PL/postal_codes.csv')
+        postal_codes_file = csv.DictReader(postal_codes_file.decode('utf-8-sig').splitlines(), delimiter=';')
+
+        for postal_code in postal_codes_file:
+            self._postal_codes[postal_code['MIEJSCOWOŚĆ']].append(postal_code['KOD POCZTOWY'])
+
+    def generate(self, lang: str = 'PL'):
         """ Generating address with city, street, street number,  and postal code
 
         Parameters:
-        counter (int): Default is 1. You can specify how much addreses you want to generate
-        lang (str): Default is 'PL'. By this argument you can choose from wchich country addresses should be generated.
+        lang (str): Default is 'PL'. By this argument you can choose from which country addresses should be generated.
 
         Returns:
-        Dict(Dict()): returning generated addresses in nested dictionary for easy access
+        Dict(): returning generated address in dictionary for easy access
 
         """
-        generated_cities = self.address_generator.generate(lang, self.cities_pops_data, counter, self.sep)
-        address: Dict[Dict[str, str]] = dict(dict())
-        for city, address_id in zip(generated_cities, range(len(generated_cities))):
-            sym = self.get_sym_city(city)
-            street = self.get_streets(int(sym))
-            postal_code = self.get_code(str(city))
-            address.update({str(address_id): {'street': street, 'city': city, 'postal_code': postal_code}})
+        address_generator = Generator()
+        city = str(address_generator.generate(lang, 'cities_pops', 1, '\t')[0])
+        sym = self._get_sym_city(city)
+        street = self._get_streets(str(sym))
+        postal_code = self._get_postal_code(city)
+        address = {'street': street, 'city': city, 'postal_code': postal_code}
         return address
 
-    def get_code(self, city: str):  # Searching for city in postal_codes returning it's value
+    def _get_sym_city(self, city: str):
+        """Searching for city in cities and returning sym (identifier)
+
+        Parameters:
+        city (str): name of city for searching
+
+        Returns:
+        str : return sym for searching city
+        """
+        return list(self._cities.keys())[list(self._cities.values()).index(city)]
+
+    def _get_postal_code(self, city: str):
         """Search and return postal code for a given city
 
         Parameters:
@@ -89,48 +108,22 @@ class Addresses:
         Returns:
         str: Returns postal code
         """
-        codes = list()
-        for code in self._postal_code:
-            if code[0] == city:
-                codes.append(code[1])
-        if codes:
-            return random.choice(codes)
-        return 'No city in file'
+        city.replace('-', ' ')
+        return random.choice(self._postal_codes[city])
 
-    def get_sym_city(self, city: str):    # Searching for city in cities and returning sym
-        """Searching for city in cities and returning sym (indentificator)
+    def _get_streets(self, city_sym: str):
+        """ Generate random street for given city sym (identifier) that is in this city.
 
         Parameters:
-        city (str): name of city for searching
-
-        Returns:
-        str : return sym for searching city
-        """
-        for sym in self._cities:
-            if sym[1] == city:
-                return sym[0]
-        return 'No city in file'
-
-    def get_streets(self, city_sym: int):    # Returning streets for city sym
-        """ Generate random street for given city sym (identificator) that is in this city.
-
-        Parameters:
-        city_sym (int): number of city syn
+        city_sym (str): number of city syn
 
         Returns:
         str: returns random street
         """
-        if city_sym != 'No city in file':   # If city_sym isn't set as a 'No city in file' generating address
-            streets = []
-            streets_dump = []
-            for row in self._streets:   # Reading streets
-                if row[0] == city_sym:      # Checking if city is in list
-                    streets.append(row[1])
-                elif row[0] != 'SYM' and row[0] != city_sym:    # Checking if city isn't in list and isn't header 'SYM'
-                    if 287400 % int(row[0]):        # Decimation of list of streets from which we generate
-                        streets_dump.append(row[1])
-            if not streets:
-                return random.choice(streets_dump) + ' ' + str((round(random.lognormvariate(1.6, 2)) + 1) % 200)    # Generating address if city isn't in file
-            return random.choice(streets) + ' ' + str((round(random.lognormvariate(1.6, 2)) + 1) % 200)     # Generating address if city is in file
-        else:
-            return city_sym       # If city_sym is set as a 'No city in file' returning this string
+        try:
+            streets = self._streets[city_sym]
+            return random.choice(streets) + ' ' + str((round(random.lognormvariate(1.6, 2)) + 1) % 200)
+        except KeyError:
+            rand_sym = random.choice(list(self._streets.keys()))
+            streets = self._streets[rand_sym]
+            return random.choice(streets) + ' ' + str((round(random.lognormvariate(1.6, 2)) + 1) % 200)
