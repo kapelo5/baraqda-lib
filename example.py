@@ -15,9 +15,9 @@ if __name__ == '__main__':
 
     # test Person
     person = Person()
-    person.set()
+    person.set(lang='PL')
     print(person.get())
 
     # test Addresses
     adres = Addresses()
-    print(adres.generate(counter=1, lang='PL'))
+    print(adres.generate(lang='PL'))

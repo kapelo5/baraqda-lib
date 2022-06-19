@@ -13,7 +13,7 @@ class Generator:
         self._list_of_files: Dict[str, list] = dict()
 
         self._list_of_files = {'PL': ['age.csv', 'blood_type.csv', 'cities_pops.txt', 'eyes.csv', 'female_first_name.csv', 'female_second_name.csv', 'female_surname.csv',
-                                      'hair.csv', 'male_first_name.csv', 'male_second_name.csv', 'male_surname.csv'],
+                                      'hair.csv', 'male_first_name.csv', 'male_second_name.csv', 'male_surname.csv', 'cars.csv'],
                                'DE': ['age.csv', 'blood_type.csv', 'eyes.csv', 'female_first_name.csv', 'female_second_name.csv', 'female_surname.csv',
                       'hair.csv', 'male_first_name.csv', 'male_second_name.csv', 'male_surname.csv']}
 
