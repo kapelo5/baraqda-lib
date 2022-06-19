@@ -18,6 +18,11 @@ if __name__ == '__main__':
     person.set(lang='PL')
     print(person.get())
 
+    person.set(lang='DE')
+    print(person.get())
+
+
+
     # test Addresses
     adres = Addresses()
     print(adres.generate(lang='PL'))
