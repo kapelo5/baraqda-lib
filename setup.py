@@ -14,7 +14,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='baraqda-lib',
-    version='0.0.16',
+    version='0.0.17',
     packages=['tests', 'baraqdalib'],
     url='',
     license='MIT',

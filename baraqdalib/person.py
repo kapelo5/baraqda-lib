@@ -149,12 +149,12 @@ class Person:
                 "name": self.first_name,
                 "surname": self.surname,
                 "gender": self.gender,
-                "mother's maiden name": self.mothers_maiden_name,
+                "mother_maiden_name": self.mothers_maiden_name,
                 "eyes": self.eyes,
                 "hair": self.hair,
-                "age (in years)": self.age,
-                "date of birth": self.date_of_birth,
-                "blood type": self.blood_type,
+                "age_in_years": self.age,
+                "date_of_birth": self.date_of_birth,
+                "blood_type": self.blood_type,
                 "ID": self.id_number
 
             }
@@ -164,12 +164,12 @@ class Person:
                 "second name": self.second_name,
                 "surname": self.surname,
                 "gender": self.gender,
-                "mother's maiden name": self.mothers_maiden_name,
+                "mother_maiden_name": self.mothers_maiden_name,
                 "eyes": self.eyes,
                 "hair": self.hair,
-                "age (in years)": self.age,
-                "date of birth": self.date_of_birth,
-                "blood type": self.blood_type,
+                "age_in_years": self.age,
+                "date_of_birth": self.date_of_birth,
+                "blood_type": self.blood_type,
                 "ID": self.id_number
 
             }
