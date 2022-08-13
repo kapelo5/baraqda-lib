@@ -37,7 +37,7 @@ For generating person attributes use:
     Person.set()
     Person.get()
 
-If you want to generate more person attributes put above code in loop. 
+If you want to generate more person attributes put above code in loop. You can also specify nationality of person using parameter lang ('PL', 'DE').
 
 If you don't want to generate the whole person but only one attribute use Generator class.
 Example:
@@ -241,23 +241,4 @@ Print generated attributes
     Parameters: None
 
     Returns: None
-
-# How to build library to pip
-
-Go to folder where library is, 
-
-        cd ~/baraqda-lib
-
-Build library using:
-
-        python3 setup.py sdist bdist_wheel
-
-Check if build is OK, and passed tests.
-
-        twine check dist/*
-
-Upload library to pip.
-
-        twine upload dist/*
-
         
