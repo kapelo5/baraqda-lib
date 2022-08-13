@@ -14,12 +14,12 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='baraqda-lib',
-    version='0.0.15',
+    version='0.0.18',
     packages=['tests', 'baraqdalib'],
     url='',
     license='MIT',
     author='Kacper Hanuszewicz, Aleksander Karbowy, Wojciech Marcinkowski, Marcin Rogoń',
-    author_email='',
+    author_email='baraqda-team@outlook.com',
     description='Generator of real fake data for testing purpose using real distribution in society',
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -52,6 +52,20 @@ class Person:
                 date_of_birth = str(day) + '.' + str(month) + '.' + str(year_of_birth)
         return date_of_birth
 
+    def set_german_ID(self, date_of_birth):
+        """ Create German identifacation number
+
+         Parameters:
+         date_of_birth (str):
+
+         Returns:
+         str: returning calculated ID number
+         """
+        german_ID = date_of_birth[-2:]+date_of_birth[3:5] + date_of_birth[:2] +str(randrange(1, 9)) \
+                    + str(int(date_of_birth[-2:])+10) + date_of_birth[3:5]+date_of_birth[:2] \
+                    + str(randrange(1, 9)) + "D" + str(randrange(1, 9))
+        return german_ID
+
     def set_pesel(self, date_of_birth, female_or_male):                 #func creates polish ID number
         """ Create polish identifacation number, PESEL
 
@@ -80,18 +94,20 @@ class Person:
             pesel = pesel + control_sum[-1]
         return pesel
 
-    def set(self):      #generating parameters of a person based on our generator
+
+
+    def set(self, lang):      #generating parameters of a person based on our generator
         """Generating parameters for a person based on
 
         Parameters: None
 
         Returns: None
         """
-        self.eyes = str(self.person_generator.generate('PL', 'eyes', 1, sep='\t'))[2:-2] #unisex attributes
-        self.age = str(self.person_generator.generate('PL', 'age', 1, sep='\t'))[2:4]
-        self.hair = str(self.person_generator.generate('PL', 'hair', 1, sep='\t'))[2:-2]
-        self.blood_type= str(self.person_generator.generate('PL', 'blood_type', 1, sep='\t'))[2:-2]
-        self.mothers_maiden_name = str(self.person_generator.generate('PL', 'female_surname', 1, sep='\t'))[2:-2]
+        self.eyes = str(self.person_generator.generate(lang, 'eyes', 1, sep='\t'))[2:-2] #unisex attributes
+        self.age = str(self.person_generator.generate(lang, 'age', 1, sep='\t'))[2:4]
+        self.hair = str(self.person_generator.generate(lang, 'hair', 1, sep='\t'))[2:-2]
+        self.blood_type= str(self.person_generator.generate(lang, 'blood_type', 1, sep='\t'))[2:-2]
+        self.mothers_maiden_name = str(self.person_generator.generate(lang, 'female_surname', 1, sep='\t'))[2:-2]
         if self.age == 'less then a year':
             self.nr_of_years = 0                #temporary value needed to determine date of birth
             self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
@@ -100,20 +116,26 @@ class Person:
             self.date_of_birth = self.set_date_of_birth(self.nr_of_years)
         if self.toss() == 0:
             self.gender = 'Female'              #female attributes
-            self.first_name = str(self.person_generator.generate('PL', 'female_first_name', 1, sep='\t'))[2:-2]
-            self.second_name = str(self.person_generator.generate('PL', 'female_second_name', 1, sep='\t'))[2:-2]
+            self.first_name = str(self.person_generator.generate(lang, 'female_first_name', 1, sep='\t'))[2:-2]
+            self.second_name = str(self.person_generator.generate(lang, 'female_second_name', 1, sep='\t'))[2:-2]
             while self.second_name == self.first_name:
-                self.second_name = str(self.person_generator.generate('PL', 'female_second_name', 1, sep='\t'))[2:-2]
-            self.surname = str(self.person_generator.generate('PL', 'female_surname', 1, sep='\t'))[2:-2]
-            self.id_number = self.set_pesel(self.date_of_birth, 'Female')
+                self.second_name = str(self.person_generator.generate(lang, 'female_second_name', 1, sep='\t'))[2:-2]
+            self.surname = str(self.person_generator.generate(lang, 'female_surname', 1, sep='\t'))[2:-2]
+            if lang == 'PL': #determinating nationality
+                self.id_number = self.set_pesel(self.date_of_birth, 'Female')
+            elif lang == 'DE':
+                self.id_number = self.set_german_ID(self.date_of_birth)
         else:
-            self.gender = 'Male'                #female attributes
-            self.first_name = str(self.person_generator.generate('PL', 'male_first_name', 1, sep='\t'))[2:-2]
-            self.second_name = str(self.person_generator.generate('PL', 'male_second_name', 1, sep='\t'))[2:-2]
+            self.gender = 'Male'                #male attributes
+            self.first_name = str(self.person_generator.generate(lang, 'male_first_name', 1, sep='\t'))[2:-2]
+            self.second_name = str(self.person_generator.generate(lang, 'male_second_name', 1, sep='\t'))[2:-2]
             while self.second_name == self.first_name:
-                self.second_name = str(self.person_generator.generate('PL', 'male_second_name', 1, sep='\t'))[2:-2]
-            self.surname = str(self.person_generator.generate('PL', 'male_surname', 1, sep='\t'))[2:-2]
-            self.id_number = self.set_pesel(self.date_of_birth, 'Male')
+                self.second_name = str(self.person_generator.generate(lang, 'male_second_name', 1, sep='\t'))[2:-2]
+            self.surname = str(self.person_generator.generate(lang, 'male_surname', 1, sep='\t'))[2:-2]
+            if lang == 'PL': #determinating nationality
+                self.id_number = self.set_pesel(self.date_of_birth, 'Male')
+            elif lang == 'DE':
+                self.id_number = self.set_german_ID(self.date_of_birth)
 
     def get(self):
         """Print generated attribiutes
@@ -127,12 +149,12 @@ class Person:
                 "name": self.first_name,
                 "surname": self.surname,
                 "gender": self.gender,
-                "mother's maiden name": self.mothers_maiden_name,
+                "mother_maiden_name": self.mothers_maiden_name,
                 "eyes": self.eyes,
                 "hair": self.hair,
-                "age (in years)": self.age,
-                "date of birth": self.date_of_birth,
-                "blood type": self.blood_type,
+                "age_in_years": self.age,
+                "date_of_birth": self.date_of_birth,
+                "blood_type": self.blood_type,
                 "ID": self.id_number
 
             }
@@ -142,12 +164,12 @@ class Person:
                 "second name": self.second_name,
                 "surname": self.surname,
                 "gender": self.gender,
-                "mother's maiden name": self.mothers_maiden_name,
+                "mother_maiden_name": self.mothers_maiden_name,
                 "eyes": self.eyes,
                 "hair": self.hair,
-                "age (in years)": self.age,
-                "date of birth": self.date_of_birth,
-                "blood type": self.blood_type,
+                "age_in_years": self.age,
+                "date_of_birth": self.date_of_birth,
+                "blood_type": self.blood_type,
                 "ID": self.id_number
 
             }
